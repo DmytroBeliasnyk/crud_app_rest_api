@@ -1,0 +1,4 @@
+.vscode/
+.env
+.database
+go.sum
