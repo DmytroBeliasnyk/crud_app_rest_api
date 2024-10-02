@@ -7,7 +7,6 @@ type ProjectDTO struct {
 }
 
 type UpdateProjectDTO struct {
-	Id          int64  `json:"id" required:"true"`
 	Title       string `json:"title" required:"false"`
 	Description string `json:"description" required:"false"`
 	Done        bool   `json:"done" required:"false"`

@@ -1,4 +1,4 @@
-package service
+package services
 
 import (
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/dto"
@@ -25,7 +25,7 @@ func (service *ProjectServiceImpl) GetAll() ([]dto.ProjectDTO, error) {
 	return nil, nil
 }
 
-func (service *ProjectServiceImpl) UpdateById(p dto.ProjectDTO) error {
+func (service *ProjectServiceImpl) UpdateById(id int64, p dto.UpdateProjectDTO) error {
 	return nil
 }
 
