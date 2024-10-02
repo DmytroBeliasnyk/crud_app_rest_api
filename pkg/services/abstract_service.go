@@ -6,7 +6,7 @@ import (
 )
 
 type ProjectService interface {
-	Add(p dto.ProjectDTO) error
+	Create(p dto.ProjectDTO) (int64, error)
 	GetById(id int64) (dto.ProjectDTO, error)
 	GetAll() ([]dto.ProjectDTO, error)
 	UpdateById(id int64, p dto.UpdateProjectDTO) error

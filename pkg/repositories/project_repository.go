@@ -13,8 +13,20 @@ func NewProjectRepository(db *sqlx.DB) *ProjectRepositoryImpl {
 	return &ProjectRepositoryImpl{db}
 }
 
-func (repo *ProjectRepositoryImpl) Add(p entity.Project) error {
-	return nil
+func (repo *ProjectRepositoryImpl) Create(p entity.Project) (int64, error) {
+	tx, err := repo.db.Begin()
+	if err != nil {
+		return 0, tx.Rollback()
+	}
+
+	var id int64
+	if err = tx.QueryRow("INSERT INTO projects (title, description, done) VALUES ($1, $2, $3) RETURNING id",
+		p.Title, p.Description, p.Done).
+		Scan(&id); err != nil {
+		return 0, tx.Rollback()
+	}
+
+	return id, tx.Commit()
 }
 
 func (repo *ProjectRepositoryImpl) GetById(id int64) (entity.Project, error) {

@@ -6,7 +6,7 @@ import (
 )
 
 type ProjectRepository interface {
-	Add(p entity.Project) error
+	Create(p entity.Project) (int64, error)
 	GetById(id int64) (entity.Project, error)
 	GetAll() ([]entity.Project, error)
 	UpdateById(p entity.Project) error

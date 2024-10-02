@@ -20,7 +20,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		projects := api.Group("/projects")
 		{
-			projects.Handle("POST", "/create", h.Add)
+			projects.Handle("POST", "/", h.Create)
 			projects.Handle("GET", "/", h.GetAll)
 			projects.Handle("GET", "/:id", h.GetById)
 			projects.Handle("POST", "/:id", h.UpdateById)
