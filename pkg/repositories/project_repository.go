@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/dto"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/entity"
 	"github.com/jmoiron/sqlx"
 )
@@ -29,8 +30,18 @@ func (repo *ProjectRepositoryImpl) Create(p entity.Project) (int64, error) {
 	return id, tx.Commit()
 }
 
-func (repo *ProjectRepositoryImpl) GetById(id int64) (entity.Project, error) {
-	return entity.Project{}, nil
+func (repo *ProjectRepositoryImpl) GetById(id int64) (dto.ProjectDTO, error) {
+	tx, err := repo.db.Beginx()
+	if err != nil {
+		return dto.ProjectDTO{}, tx.Rollback()
+	}
+
+	var project entity.Project
+	if err = tx.Get(&project, "SELECT * FROM projects WHERE id=$1", id); err != nil {
+		return dto.ProjectDTO{}, tx.Rollback()
+	}
+
+	return *project.ToDTO(), tx.Commit()
 }
 
 func (repo *ProjectRepositoryImpl) GetAll() ([]entity.Project, error) {

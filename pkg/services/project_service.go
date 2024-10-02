@@ -19,7 +19,7 @@ func (service *ProjectServiceImpl) Create(p dto.ProjectDTO) (int64, error) {
 }
 
 func (service *ProjectServiceImpl) GetById(id int64) (dto.ProjectDTO, error) {
-	return dto.ProjectDTO{}, nil
+	return service.repo.GetById(id)
 }
 
 func (service *ProjectServiceImpl) GetAll() ([]dto.ProjectDTO, error) {
