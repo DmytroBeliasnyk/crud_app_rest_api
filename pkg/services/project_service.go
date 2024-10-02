@@ -19,17 +19,26 @@ func (service *ProjectServiceImpl) Create(p dto.ProjectDTO) (int64, error) {
 }
 
 func (service *ProjectServiceImpl) GetById(id int64) (dto.ProjectDTO, error) {
-	return service.repo.GetById(id)
+	project, err := service.repo.GetById(id)
+
+	return *project.ToDTO(), err
 }
 
 func (service *ProjectServiceImpl) GetAll() ([]dto.ProjectDTO, error) {
-	return nil, nil
+	projects, err := service.repo.GetAll()
+
+	dtos := make([]dto.ProjectDTO, len(projects))
+	for i, p := range projects {
+		dtos[i] = *p.ToDTO()
+	}
+
+	return dtos, err
 }
 
-func (service *ProjectServiceImpl) UpdateById(id int64, p dto.UpdateProjectDTO) error {
-	return nil
+func (service *ProjectServiceImpl) UpdateById(id int64, input dto.UpdateProjectDTO) error {
+	return service.repo.UpdateById(id, input)
 }
 
 func (service *ProjectServiceImpl) DeleteById(id int64) error {
-	return nil
+	return service.repo.DeleteById(id)
 }
