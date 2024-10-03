@@ -16,6 +16,14 @@ import (
 	"github.com/spf13/viper"
 )
 
+//	@title		Documentation for api
+//	@version	1.0
+
+//	@host		localhost:8000
+//	@BasePath	/
+
+// @accept		json
+// @produce	json
 func main() {
 	if err := initConfig(); err != nil {
 		log.Fatalf("error initializing configs: %s", err.Error())

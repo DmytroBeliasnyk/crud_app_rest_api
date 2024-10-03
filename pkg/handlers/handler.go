@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	_ "github.com/DmytroBeliasnyk/crud_app_rest_api/docs"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Handler struct {
@@ -16,15 +19,17 @@ func NewHandler(service *services.AbstractService) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	api := router.Group("/api")
 	{
 		projects := api.Group("/projects")
 		{
-			projects.Handle("POST", "/", h.Create)
-			projects.Handle("GET", "/", h.GetAll)
-			projects.Handle("GET", "/:id", h.GetById)
-			projects.Handle("POST", "/:id", h.UpdateById)
-			projects.Handle("DELETE", "/:id", h.DeleteById)
+			projects.POST("/", h.Create)
+			projects.GET("/", h.GetAll)
+			projects.GET("", h.GetById)
+			projects.POST("/:id", h.UpdateById)
+			projects.DELETE("/:id", h.DeleteById)
 		}
 	}
 

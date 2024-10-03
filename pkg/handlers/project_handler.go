@@ -8,6 +8,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Create godoc
+//
+//	@Summary		Create
+//	@Description	create new project
+//	@Tags			projects
+//	@Accept			json
+//	@Produce		json
+//	@Param			input	body		dto.ProjectDTO	true	"project info"
+//	@Success		201		{integer}	integer			id
+//	@Failure		400		{object}	errResponse
+//	@Failure		500		{object}	errResponse
+//	@Failure		default	{obkect}	errResponse
+//	@Router			/api/projects/ [post]
 func (h *Handler) Create(ctx *gin.Context) {
 	var input dto.ProjectDTO
 	if err := ctx.BindJSON(&input); err != nil {
@@ -26,8 +39,21 @@ func (h *Handler) Create(ctx *gin.Context) {
 	})
 }
 
+// GetById godoc
+//
+//	@Summary		GetById
+//	@Description	get project by id
+//	@Tags			projects
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		query		integer	true	"project id"
+//	@Success		200		{object}	dto.ProjectDTO
+//	@Failure		400		{object}	errResponse
+//	@Failure		500		{object}	errResponse
+//	@Failure		default	{object}	errResponse
+//	@Router			/api/projects [get]
 func (h *Handler) GetById(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
+	id, err := strconv.Atoi(ctx.Query("id"))
 	if err != nil {
 		newErrResponse(ctx, http.StatusBadRequest, "invalid id param")
 		return
@@ -42,6 +68,17 @@ func (h *Handler) GetById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, output)
 }
 
+// GetAll godoc
+//
+//	@Summary		GetAll
+//	@Description	get all projects
+//	@Tags			projects
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{array}		dto.ProjectDTO
+//	@Failure		500		{object}	errResponse
+//	@Failure		default	{object}	errResponse
+//	@Router			/api/projects/ [get]
 func (h *Handler) GetAll(ctx *gin.Context) {
 	projects, err := h.service.ProjectService.GetAll()
 	if err != nil {
@@ -52,6 +89,19 @@ func (h *Handler) GetAll(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, projects)
 }
 
+// UpdateById godoc
+//
+//	@Summary		UpdateById
+//	@Description	update project by id
+//	@Tags			projects
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		integer	true	"project id"
+//	@Success		200		{object}	statusResponse
+//	@Failure		400		{object}	errResponse
+//	@Failure		500		{object}	errResponse
+//	@Failure		default	{object}	errResponse
+//	@Router			/api/projects/{id} [post]
 func (h *Handler) UpdateById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -78,6 +128,19 @@ func (h *Handler) UpdateById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, statusResponse{"ok"})
 }
 
+// DeleteById godoc
+//
+//	@Summary		DeleteById
+//	@Description	delete project by id
+//	@Tags			projects
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		integer	true	"project id"
+//	@Success		200		{object}	statusResponse
+//	@Failure		400		{object}	errResponse
+//	@Failure		500		{object}	errResponse
+//	@Failure		default	{object}	errResponse
+//	@Router			/api/projects/{id} [delete]
 func (h *Handler) DeleteById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {

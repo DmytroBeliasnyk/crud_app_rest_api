@@ -1,0 +1,190 @@
+basePath: /
+consumes:
+- application/json
+definitions:
+  dto.ProjectDTO:
+    properties:
+      description:
+        type: string
+      done:
+        type: boolean
+      title:
+        type: string
+    required:
+    - title
+    type: object
+  handlers.errResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  handlers.statusResponse:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  title: Documentation for api
+  version: "1.0"
+paths:
+  /api/projects:
+    get:
+      consumes:
+      - application/json
+      description: get project by id
+      parameters:
+      - description: project id
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ProjectDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+      summary: GetById
+      tags:
+      - projects
+  /api/projects/:
+    get:
+      consumes:
+      - application/json
+      description: get all projects
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ProjectDTO'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+      summary: GetAll
+      tags:
+      - projects
+    post:
+      consumes:
+      - application/json
+      description: create new project
+      parameters:
+      - description: project info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ProjectDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        default:
+          description: ""
+          schema:
+            type: obkect
+      summary: Create
+      tags:
+      - projects
+  /api/projects/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete project by id
+      parameters:
+      - description: project id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+      summary: DeleteById
+      tags:
+      - projects
+    post:
+      consumes:
+      - application/json
+      description: update project by id
+      parameters:
+      - description: project id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+      summary: UpdateById
+      tags:
+      - projects
+produces:
+- application/json
+swagger: "2.0"
