@@ -1,9 +1,8 @@
 package handlers
 
 import (
-	"log"
-
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type errResponse struct {
@@ -14,8 +13,11 @@ type statusResponse struct {
 	Message string `json:"message"`
 }
 
-func newErrResponse(ctx *gin.Context, status int, message string) {
-	log.Printf("ERROR: %s\n", message)
+func newErrResponse(ctx *gin.Context, status int, err string) {
+	logrus.WithFields(logrus.Fields{
+		"uri":    ctx.Request.RequestURI,
+		"method": ctx.Request.Method,
+	}).Error(err)
 
-	ctx.AbortWithStatusJSON(status, errResponse{message})
+	ctx.AbortWithStatusJSON(status, errResponse{err})
 }

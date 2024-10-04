@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -55,7 +56,7 @@ func (h *Handler) Create(ctx *gin.Context) {
 func (h *Handler) GetById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Query("id"))
 	if err != nil {
-		newErrResponse(ctx, http.StatusBadRequest, "invalid id param")
+		newErrResponse(ctx, http.StatusBadRequest, fmt.Sprintf("%s: message: invalid id param", err))
 		return
 	}
 
@@ -96,7 +97,8 @@ func (h *Handler) GetAll(ctx *gin.Context) {
 //	@Tags			projects
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path		integer	true	"project id"
+//	@Param			id		path		integer			true	"project id"
+//	@Param			input	body		dto.ProjectDTO	true	"project info"
 //	@Success		200		{object}	statusResponse
 //	@Failure		400		{object}	errResponse
 //	@Failure		500		{object}	errResponse
@@ -105,7 +107,7 @@ func (h *Handler) GetAll(ctx *gin.Context) {
 func (h *Handler) UpdateById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		newErrResponse(ctx, http.StatusBadRequest, "invalid id param")
+		newErrResponse(ctx, http.StatusBadRequest, fmt.Sprintf("%s: message: invalid id param", err))
 		return
 	}
 
@@ -144,7 +146,7 @@ func (h *Handler) UpdateById(ctx *gin.Context) {
 func (h *Handler) DeleteById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
-		newErrResponse(ctx, http.StatusBadRequest, "invalid id param")
+		newErrResponse(ctx, http.StatusBadRequest, fmt.Sprintf("%s: message: invalid id param", err))
 		return
 	}
 

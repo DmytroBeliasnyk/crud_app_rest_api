@@ -2,16 +2,17 @@ package main
 
 import (
 	"context"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/config"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/handlers"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/repositories"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -28,14 +29,22 @@ const (
 // @accept		json
 // @produce	json
 func main() {
+	logrus.SetLevel(logrus.ErrorLevel)
+	logrus.SetOutput(os.Stdout)
+	logrus.SetFormatter(&logrus.TextFormatter{
+		ForceColors:     true,
+		FullTimestamp:   true,
+		TimestampFormat: time.DateTime,
+	})
+
 	cfg, err := initConfig()
 	if err != nil {
-		log.Fatalf("error initializing config: %s", err.Error())
+		logrus.WithField("error", err).Fatal("error initializing config")
 	}
 
 	db, err := repositories.NewPostgresDB(*cfg)
 	if err != nil {
-		log.Fatalf("error occurred while connecting to db: %s", err.Error())
+		logrus.WithField("error", err).Fatal("error occurred while connecting to db")
 	}
 
 	repo := repositories.NewRepository(db)
@@ -45,7 +54,7 @@ func main() {
 	server := new(core.Server)
 	go func() {
 		if err = server.Run(cfg.ServerPort, handlers.InitRoutes()); err != nil {
-			log.Fatalf("error occurred while running http server: %s", err.Error())
+			logrus.WithField("error", err).Fatal("error occurred while running http server")
 		}
 	}()
 
@@ -55,12 +64,12 @@ func main() {
 	<-quit
 
 	if err = server.Shutdown(context.Background()); err != nil {
-		log.Fatalf("error occurred on server shutting down: %s", err.Error())
+		logrus.WithField("error", err).Fatal("error occurred on server shutting down")
 	}
 
 	err = db.Close()
 	if err != nil {
-		log.Fatalf("error occurred on db connection close: %s", err.Error())
+		logrus.WithField("error", err).Fatal("error occurred on db connection close")
 	}
 }
 
