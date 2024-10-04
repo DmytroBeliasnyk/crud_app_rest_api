@@ -12,6 +12,7 @@ import (
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/handlers"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/repositories"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services"
+	"github.com/DmytroBeliasnyk/in_memory_cache/memory"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,6 +20,16 @@ const (
 	CONFIG_FOLDER = "configs"
 	CONFIG_FILE   = "main"
 )
+
+func init() {
+	logrus.SetLevel(logrus.ErrorLevel)
+	logrus.SetOutput(os.Stdout)
+	logrus.SetFormatter(&logrus.TextFormatter{
+		ForceColors:     true,
+		FullTimestamp:   true,
+		TimestampFormat: time.DateTime,
+	})
+}
 
 //	@title		Documentation for api
 //	@version	1.0
@@ -29,14 +40,6 @@ const (
 // @accept		json
 // @produce	json
 func main() {
-	logrus.SetLevel(logrus.ErrorLevel)
-	logrus.SetOutput(os.Stdout)
-	logrus.SetFormatter(&logrus.TextFormatter{
-		ForceColors:     true,
-		FullTimestamp:   true,
-		TimestampFormat: time.DateTime,
-	})
-
 	cfg, err := initConfig()
 	if err != nil {
 		logrus.WithField("error", err).Fatal("error initializing config")
@@ -49,7 +52,7 @@ func main() {
 
 	repo := repositories.NewRepository(db)
 	service := services.NewService(repo)
-	handlers := handlers.NewHandler(service)
+	handlers := handlers.NewHandler(service, memory.GetCache())
 
 	server := new(core.Server)
 	go func() {

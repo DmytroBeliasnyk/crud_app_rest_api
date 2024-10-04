@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/dto"
 	"github.com/gin-gonic/gin"
@@ -35,6 +36,8 @@ func (h *Handler) Create(ctx *gin.Context) {
 		return
 	}
 
+	h.cache.Delete("all")
+
 	ctx.JSON(http.StatusCreated, map[string]interface{}{
 		"id": id,
 	})
@@ -54,19 +57,26 @@ func (h *Handler) Create(ctx *gin.Context) {
 //	@Failure		default	{object}	errResponse
 //	@Router			/api/projects [get]
 func (h *Handler) GetById(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Query("id"))
+	paramId := ctx.Query("id")
+
+	project, err := h.cache.Get(paramId)
 	if err != nil {
-		newErrResponse(ctx, http.StatusBadRequest, fmt.Sprintf("%s: message: invalid id param", err))
-		return
+		id, err := strconv.Atoi(ctx.Query("id"))
+		if err != nil {
+			newErrResponse(ctx, http.StatusBadRequest, fmt.Sprintf("%s: message: invalid id param", err))
+			return
+		}
+
+		project, err = h.service.ProjectService.GetById(int64(id))
+		if err != nil {
+			newErrResponse(ctx, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		h.cache.Set(paramId, project, time.Hour)
 	}
 
-	output, err := h.service.ProjectService.GetById(int64(id))
-	if err != nil {
-		newErrResponse(ctx, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	ctx.JSON(http.StatusOK, output)
+	ctx.JSON(http.StatusOK, project)
 }
 
 // GetAll godoc
@@ -81,10 +91,15 @@ func (h *Handler) GetById(ctx *gin.Context) {
 //	@Failure		default	{object}	errResponse
 //	@Router			/api/projects/ [get]
 func (h *Handler) GetAll(ctx *gin.Context) {
-	projects, err := h.service.ProjectService.GetAll()
+	projects, err := h.cache.Get("all")
 	if err != nil {
-		newErrResponse(ctx, http.StatusInternalServerError, err.Error())
-		return
+		projects, err = h.service.ProjectService.GetAll()
+		if err != nil {
+			newErrResponse(ctx, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		h.cache.Set("all", projects, time.Hour)
 	}
 
 	ctx.JSON(http.StatusOK, projects)
@@ -105,7 +120,8 @@ func (h *Handler) GetAll(ctx *gin.Context) {
 //	@Failure		default	{object}	errResponse
 //	@Router			/api/projects/{id} [post]
 func (h *Handler) UpdateById(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
+	paramId := ctx.Param("id")
+	id, err := strconv.Atoi(paramId)
 	if err != nil {
 		newErrResponse(ctx, http.StatusBadRequest, fmt.Sprintf("%s: message: invalid id param", err))
 		return
@@ -127,6 +143,9 @@ func (h *Handler) UpdateById(ctx *gin.Context) {
 		return
 	}
 
+	h.cache.Delete("all")
+	h.cache.Delete(paramId)
+
 	ctx.JSON(http.StatusOK, statusResponse{"ok"})
 }
 
@@ -144,7 +163,8 @@ func (h *Handler) UpdateById(ctx *gin.Context) {
 //	@Failure		default	{object}	errResponse
 //	@Router			/api/projects/{id} [delete]
 func (h *Handler) DeleteById(ctx *gin.Context) {
-	id, err := strconv.Atoi(ctx.Param("id"))
+	paramId := ctx.Param("id")
+	id, err := strconv.Atoi(paramId)
 	if err != nil {
 		newErrResponse(ctx, http.StatusBadRequest, fmt.Sprintf("%s: message: invalid id param", err))
 		return
@@ -154,6 +174,9 @@ func (h *Handler) DeleteById(ctx *gin.Context) {
 		newErrResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	h.cache.Delete("all")
+	h.cache.Delete(paramId)
 
 	ctx.JSON(http.StatusOK, statusResponse{"ok"})
 }

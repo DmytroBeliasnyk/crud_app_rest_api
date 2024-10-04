@@ -3,6 +3,7 @@ module github.com/DmytroBeliasnyk/crud_app_rest_api
 go 1.23.1
 
 require (
+	github.com/DmytroBeliasnyk/in_memory_cache v0.0.0-20241002195810-bdf544e1e7d7
 	github.com/gin-gonic/gin v1.10.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
