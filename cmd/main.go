@@ -8,12 +8,15 @@ import (
 	"syscall"
 
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core"
+	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/config"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/handlers"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/repositories"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services"
-	"github.com/jmoiron/sqlx"
-	"github.com/joho/godotenv"
-	"github.com/spf13/viper"
+)
+
+const (
+	CONFIG_FOLDER = "configs"
+	CONFIG_FILE   = "main"
 )
 
 //	@title		Documentation for api
@@ -25,15 +28,12 @@ import (
 // @accept		json
 // @produce	json
 func main() {
-	if err := initConfig(); err != nil {
-		log.Fatalf("error initializing configs: %s", err.Error())
+	cfg, err := initConfig()
+	if err != nil {
+		log.Fatalf("error initializing config: %s", err.Error())
 	}
 
-	if err := godotenv.Load(); err != nil {
-		log.Fatalf("error loading env variables: %s", err.Error())
-	}
-
-	db, err := initDB()
+	db, err := repositories.NewPostgresDB(*cfg)
 	if err != nil {
 		log.Fatalf("error occurred while connecting to db: %s", err.Error())
 	}
@@ -44,7 +44,7 @@ func main() {
 
 	server := new(core.Server)
 	go func() {
-		if err = server.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
+		if err = server.Run(cfg.ServerPort, handlers.InitRoutes()); err != nil {
 			log.Fatalf("error occurred while running http server: %s", err.Error())
 		}
 	}()
@@ -64,22 +64,11 @@ func main() {
 	}
 }
 
-func initDB() (*sqlx.DB, error) {
-	cfg := repositories.Config{
-		Host:     viper.GetString("db.host"),
-		Port:     viper.GetString("db.port"),
-		Username: viper.GetString("db.username"),
-		Password: os.Getenv("DB_PASSWORD"),
-		DBName:   viper.GetString("db.dbname"),
-		SSLMode:  viper.GetString("db.sslmode"),
+func initConfig() (*config.Config, error) {
+	cfg, err := config.InitConfig(CONFIG_FOLDER, CONFIG_FILE)
+	if err != nil {
+		return nil, err
 	}
 
-	return repositories.NewPostgresDB(cfg)
-}
-
-func initConfig() error {
-	viper.AddConfigPath("config")
-	viper.SetConfigName("config")
-
-	return viper.ReadInConfig()
+	return cfg, nil
 }
