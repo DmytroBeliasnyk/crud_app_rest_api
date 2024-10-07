@@ -52,7 +52,7 @@ func main() {
 
 	repo := repositories.NewRepository(db)
 	service := services.NewService(repo, cfg)
-	handlers := handlers.NewHandler(service, memory.GetCache())
+	handlers := handlers.NewHandler(service, memory.GetCache(), cfg)
 
 	server := new(core.Server)
 	go func() {
