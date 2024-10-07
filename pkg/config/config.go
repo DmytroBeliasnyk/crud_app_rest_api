@@ -17,7 +17,8 @@ type Config struct {
 		Password DBPassword
 	} `mapstructure:"db"`
 	Auth struct {
-		Salt string
+		Salt      string
+		Signature string
 	}
 }
 

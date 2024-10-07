@@ -6,6 +6,7 @@ require (
 	github.com/DmytroBeliasnyk/in_memory_cache v0.0.0-20241002195810-bdf544e1e7d7
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/validator/v10 v10.22.1
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0

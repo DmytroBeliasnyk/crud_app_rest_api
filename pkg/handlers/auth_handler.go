@@ -31,5 +31,19 @@ func (h *Handler) signUp(ctx *gin.Context) {
 }
 
 func (h *Handler) signIn(ctx *gin.Context) {
+	var input dto.SignInDTO
+	if err := ctx.BindJSON(&input); err != nil {
+		newErrResponse(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
 
+	token, err := h.service.AuthService.SignIn(input)
+	if err != nil {
+		newErrResponse(ctx, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	ctx.JSON(http.StatusOK, map[string]interface{}{
+		"Bearer": token,
+	})
 }

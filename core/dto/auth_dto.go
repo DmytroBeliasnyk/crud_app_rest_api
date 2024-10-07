@@ -10,8 +10,8 @@ type SignUpDTO struct {
 }
 
 type SignInDTO struct {
-	Username string `json:"username" validate:"required"`
-	Password string `json:"password" validate:"required"`
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 var validate *validator.Validate
@@ -22,8 +22,4 @@ func init() {
 
 func (su *SignUpDTO) Validate() error {
 	return validate.Struct(su)
-}
-
-func (si *SignInDTO) Validate() error {
-	return validate.Struct(si)
 }

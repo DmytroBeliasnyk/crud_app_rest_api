@@ -16,6 +16,7 @@ type ProjectService interface {
 
 type AuthService interface {
 	SignUp(su dto.SignUpDTO) (int64, error)
+	SignIn(si dto.SignInDTO) (string, error)
 }
 
 type AbstractService struct {

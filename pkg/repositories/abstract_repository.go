@@ -16,6 +16,7 @@ type ProjectRepository interface {
 
 type AuthRepository interface {
 	SignUp(u *entity.User) (int64, error)
+	SignIn(username, passwordHash string) (int64, error)
 }
 
 type AbstractRepository struct {
