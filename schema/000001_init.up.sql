@@ -1,6 +1,15 @@
+CREATE TABLE users(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE projects(
-    id serial NOT NULL UNIQUE,
-    title varchar(255) NOT NULL,
-    description varchar (255),
-    done boolean NOT NULL DEFAULT false
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description VARCHAR (255),
+    done BOOLEAN NOT NULL DEFAULT false,
+    user_id INT REFERENCES users (id) ON DELETE CASCADE NOT NULL
 );
