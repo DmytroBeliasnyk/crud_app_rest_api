@@ -13,12 +13,18 @@ type ProjectService interface {
 	DeleteById(id int64) error
 }
 
+type AuthService interface {
+	SignUp(su dto.SignUpDTO) (int64, error)
+}
+
 type AbstractService struct {
 	ProjectService
+	AuthService
 }
 
 func NewService(repo *repositories.AbstractRepository) *AbstractService {
 	return &AbstractService{
 		ProjectService: NewProjectService(repo.ProjectRepository),
+		AuthService:    NewAuthService(repo.AuthRepository),
 	}
 }

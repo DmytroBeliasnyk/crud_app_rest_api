@@ -15,7 +15,7 @@ func NewProjectService(repo repositories.ProjectRepository) *ProjectServiceImpl 
 }
 
 func (service *ProjectServiceImpl) Create(p dto.ProjectDTO) (int64, error) {
-	return service.repo.Create(*entity.FromDTO(p))
+	return service.repo.Create(entity.FromDTO(p))
 }
 
 func (service *ProjectServiceImpl) GetById(id int64) (dto.ProjectDTO, error) {

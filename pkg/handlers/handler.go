@@ -26,15 +26,21 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	auth := router.Group("/auth")
+	{
+		auth.POST("/sign-up", h.signUp)
+		auth.POST("/sign-in", h.signIn)
+	}
+
 	api := router.Group("/api")
 	{
 		projects := api.Group("/projects")
 		{
-			projects.POST("/", h.Create)
-			projects.GET("/", h.GetAll)
-			projects.GET("", h.GetById)
-			projects.POST("/:id", h.UpdateById)
-			projects.DELETE("/:id", h.DeleteById)
+			projects.POST("/", h.create)
+			projects.GET("/", h.getAll)
+			projects.GET("", h.getById)
+			projects.POST("/:id", h.updateById)
+			projects.DELETE("/:id", h.deleteById)
 		}
 	}
 

@@ -17,7 +17,7 @@ func NewProjectRepository(db *sqlx.DB) *ProjectRepositoryImpl {
 	return &ProjectRepositoryImpl{db}
 }
 
-func (repo *ProjectRepositoryImpl) Create(p entity.Project) (int64, error) {
+func (repo *ProjectRepositoryImpl) Create(p *entity.Project) (int64, error) {
 	var id int64
 	if err := repo.db.QueryRow("INSERT INTO projects (title, description, done) VALUES ($1, $2, $3) RETURNING id",
 		p.Title, p.Description, p.Done).Scan(&id); err != nil {

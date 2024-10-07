@@ -5,6 +5,7 @@ go 1.23.1
 require (
 	github.com/DmytroBeliasnyk/in_memory_cache v0.0.0-20241002195810-bdf544e1e7d7
 	github.com/gin-gonic/gin v1.10.0
+	github.com/go-playground/validator/v10 v10.22.1
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
 	github.com/kelseyhightower/envconfig v1.4.0
@@ -31,7 +32,6 @@ require (
 	github.com/go-openapi/swag v0.23.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.22.1 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect

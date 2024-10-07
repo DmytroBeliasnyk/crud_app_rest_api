@@ -7,19 +7,25 @@ import (
 )
 
 type ProjectRepository interface {
-	Create(p entity.Project) (int64, error)
+	Create(p *entity.Project) (int64, error)
 	GetById(id int64) (entity.Project, error)
 	GetAll() ([]entity.Project, error)
 	UpdateById(id int64, input dto.UpdateProjectDTO) error
 	DeleteById(id int64) error
 }
 
+type AuthRepository interface {
+	SignUp(u *entity.User) (int64, error)
+}
+
 type AbstractRepository struct {
 	ProjectRepository
+	AuthRepository
 }
 
 func NewRepository(db *sqlx.DB) *AbstractRepository {
 	return &AbstractRepository{
 		ProjectRepository: NewProjectRepository(db),
+		AuthRepository:    NewAuthRepository(db),
 	}
 }

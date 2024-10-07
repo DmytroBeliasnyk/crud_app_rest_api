@@ -23,7 +23,7 @@ import (
 //	@Failure		500		{object}	errResponse
 //	@Failure		default	{obkect}	errResponse
 //	@Router			/api/projects/ [post]
-func (h *Handler) Create(ctx *gin.Context) {
+func (h *Handler) create(ctx *gin.Context) {
 	var input dto.ProjectDTO
 	if err := ctx.BindJSON(&input); err != nil {
 		newErrResponse(ctx, http.StatusBadRequest, err.Error())
@@ -56,7 +56,7 @@ func (h *Handler) Create(ctx *gin.Context) {
 //	@Failure		500		{object}	errResponse
 //	@Failure		default	{object}	errResponse
 //	@Router			/api/projects [get]
-func (h *Handler) GetById(ctx *gin.Context) {
+func (h *Handler) getById(ctx *gin.Context) {
 	paramId := ctx.Query("id")
 
 	project, err := h.cache.Get(paramId)
@@ -90,7 +90,7 @@ func (h *Handler) GetById(ctx *gin.Context) {
 //	@Failure		500		{object}	errResponse
 //	@Failure		default	{object}	errResponse
 //	@Router			/api/projects/ [get]
-func (h *Handler) GetAll(ctx *gin.Context) {
+func (h *Handler) getAll(ctx *gin.Context) {
 	projects, err := h.cache.Get("all")
 	if err != nil {
 		projects, err = h.service.ProjectService.GetAll()
@@ -119,7 +119,7 @@ func (h *Handler) GetAll(ctx *gin.Context) {
 //	@Failure		500		{object}	errResponse
 //	@Failure		default	{object}	errResponse
 //	@Router			/api/projects/{id} [post]
-func (h *Handler) UpdateById(ctx *gin.Context) {
+func (h *Handler) updateById(ctx *gin.Context) {
 	paramId := ctx.Param("id")
 	id, err := strconv.Atoi(paramId)
 	if err != nil {
@@ -162,7 +162,7 @@ func (h *Handler) UpdateById(ctx *gin.Context) {
 //	@Failure		500		{object}	errResponse
 //	@Failure		default	{object}	errResponse
 //	@Router			/api/projects/{id} [delete]
-func (h *Handler) DeleteById(ctx *gin.Context) {
+func (h *Handler) deleteById(ctx *gin.Context) {
 	paramId := ctx.Param("id")
 	id, err := strconv.Atoi(paramId)
 	if err != nil {
