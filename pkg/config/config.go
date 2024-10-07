@@ -1,13 +1,16 @@
 package config
 
 import (
+	"time"
+
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	ServerPort string `mapstructure:"server_port"`
+	ServerPort string        `mapstructure:"server_port"`
+	TokenTTL   time.Duration `mapstructure:"token_ttl"`
 	DB         struct {
 		Host     string `mapstructure:"host"`
 		Port     string `mapstructure:"port"`

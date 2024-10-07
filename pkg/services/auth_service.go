@@ -38,7 +38,7 @@ func (service *AuthServiceImpl) SignIn(si dto.SignInDTO) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
 		Subject:   strconv.FormatInt(id, 10),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 15)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(service.cfg.TokenTTL)),
 	})
 
 	return token.SignedString([]byte(service.cfg.Auth.Signature))
