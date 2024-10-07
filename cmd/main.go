@@ -45,13 +45,13 @@ func main() {
 		logrus.WithField("error", err).Fatal("error initializing config")
 	}
 
-	db, err := repositories.NewPostgresDB(*cfg)
+	db, err := repositories.NewPostgresDB(cfg)
 	if err != nil {
 		logrus.WithField("error", err).Fatal("error occurred while connecting to db")
 	}
 
 	repo := repositories.NewRepository(db)
-	service := services.NewService(repo)
+	service := services.NewService(repo, cfg)
 	handlers := handlers.NewHandler(service, memory.GetCache())
 
 	server := new(core.Server)

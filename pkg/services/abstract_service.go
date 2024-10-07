@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/dto"
+	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/config"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/repositories"
 )
 
@@ -22,9 +23,9 @@ type AbstractService struct {
 	AuthService
 }
 
-func NewService(repo *repositories.AbstractRepository) *AbstractService {
+func NewService(repo *repositories.AbstractRepository, cfg *config.Config) *AbstractService {
 	return &AbstractService{
 		ProjectService: NewProjectService(repo.ProjectRepository),
-		AuthService:    NewAuthService(repo.AuthRepository),
+		AuthService:    NewAuthService(repo.AuthRepository, cfg),
 	}
 }

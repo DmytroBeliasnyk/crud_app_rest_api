@@ -8,16 +8,20 @@ import (
 
 type Config struct {
 	ServerPort string `mapstructure:"server_port"`
-
-	Host     string `mapstructure:"host"`
-	Port     string `mapstructure:"port"`
-	Username string `mapstructure:"username"`
-	Password Password
-	DBName   string `mapstructure:"dbname"`
-	SSLMode  string `mapstructure:"sslmode"`
+	DB         struct {
+		Host     string `mapstructure:"host"`
+		Port     string `mapstructure:"port"`
+		Username string `mapstructure:"username"`
+		DBName   string `mapstructure:"dbname"`
+		SSLMode  string `mapstructure:"sslmode"`
+		Password DBPassword
+	} `mapstructure:"db"`
+	Auth struct {
+		Salt string
+	}
 }
 
-type Password struct {
+type DBPassword struct {
 	Password string
 }
 
@@ -58,7 +62,11 @@ func parseEnv(cfg *Config) error {
 		return err
 	}
 
-	if err := envconfig.Process("db", &cfg.Password); err != nil {
+	if err := envconfig.Process("db", &cfg.DB.Password); err != nil {
+		return err
+	}
+
+	if err := envconfig.Process("auth", &cfg.Auth); err != nil {
 		return err
 	}
 
