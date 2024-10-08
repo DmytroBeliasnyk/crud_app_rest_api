@@ -1,4 +1,4 @@
-package repositories
+package implrepo
 
 import (
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/entity"

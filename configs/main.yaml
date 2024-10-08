@@ -1,6 +1,8 @@
 server_port: "8000"
 
-token_ttl: 15m
+tokens_ttl:
+  jwt: 15m
+  refresh: 240h
 
 db:
   username: "postgres"

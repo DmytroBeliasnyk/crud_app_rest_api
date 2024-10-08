@@ -3,6 +3,7 @@ package repositories
 import (
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/dto"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/entity"
+	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/repositories/implrepo"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -26,7 +27,7 @@ type AbstractRepository struct {
 
 func NewRepository(db *sqlx.DB) *AbstractRepository {
 	return &AbstractRepository{
-		ProjectRepository: NewProjectRepository(db),
-		UserRepository:    NewUserRepository(db),
+		ProjectRepository: implrepo.NewProjectRepository(db),
+		UserRepository:    implrepo.NewUserRepository(db),
 	}
 }

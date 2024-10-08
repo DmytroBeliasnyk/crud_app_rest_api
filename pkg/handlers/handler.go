@@ -3,6 +3,7 @@ package handlers
 import (
 	_ "github.com/DmytroBeliasnyk/crud_app_rest_api/docs"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services"
+	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services/implserv"
 	"github.com/DmytroBeliasnyk/in_memory_cache/memory"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -11,11 +12,11 @@ import (
 
 type Handler struct {
 	service *services.AbstractService
-	auth    *services.AuthService
+	auth    *implserv.AuthService
 	cache   *memory.Cache
 }
 
-func NewHandler(service *services.AbstractService, auth *services.AuthService, cache *memory.Cache) *Handler {
+func NewHandler(service *services.AbstractService, auth *implserv.AuthService, cache *memory.Cache) *Handler {
 	return &Handler{
 		service: service,
 		auth:    auth,

@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/dto"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/repositories"
+	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services/implserv"
 )
 
 type ProjectService interface {
@@ -23,9 +24,9 @@ type AbstractService struct {
 	UserService
 }
 
-func NewService(repo *repositories.AbstractRepository, serv *AuthService) *AbstractService {
+func NewService(repo *repositories.AbstractRepository, serv *implserv.AuthService) *AbstractService {
 	return &AbstractService{
-		ProjectService: NewProjectService(repo.ProjectRepository),
-		UserService:    NewUserService(repo.UserRepository, serv),
+		ProjectService: implserv.NewProjectService(repo.ProjectRepository),
+		UserService:    implserv.NewUserService(repo.UserRepository, serv),
 	}
 }

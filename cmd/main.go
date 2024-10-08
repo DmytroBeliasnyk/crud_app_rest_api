@@ -12,6 +12,7 @@ import (
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/handlers"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/repositories"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services"
+	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services/implserv"
 	"github.com/DmytroBeliasnyk/in_memory_cache/memory"
 	"github.com/sirupsen/logrus"
 )
@@ -51,7 +52,7 @@ func main() {
 	}
 
 	repo := repositories.NewRepository(db)
-	auth := services.NewAuthService(cfg)
+	auth := implserv.NewAuthService(cfg)
 	service := services.NewService(repo, auth)
 	handlers := handlers.NewHandler(service, auth, memory.GetCache())
 

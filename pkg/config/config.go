@@ -9,9 +9,9 @@ import (
 )
 
 type Config struct {
-	ServerPort string        `mapstructure:"server_port"`
-	TokenTTL   time.Duration `mapstructure:"token_ttl"`
-	DB         struct {
+	ServerPort string `mapstructure:"server_port"`
+
+	DB struct {
 		Host     string `mapstructure:"host"`
 		Port     string `mapstructure:"port"`
 		Username string `mapstructure:"username"`
@@ -19,10 +19,13 @@ type Config struct {
 		SSLMode  string `mapstructure:"sslmode"`
 		Password DBPassword
 	} `mapstructure:"db"`
+
 	Auth struct {
 		Salt      string
 		Signature string
-	}
+		JWT       time.Duration `mapstructure:"jwt"`
+		Refresh   time.Duration `mapstructure:"refresh"`
+	} `mapstructure:"tokens_ttl"`
 }
 
 type DBPassword struct {
@@ -55,6 +58,10 @@ func parseConfig(cfg *Config) error {
 	}
 
 	if err := viper.UnmarshalKey("db", cfg); err != nil {
+		return err
+	}
+
+	if err := viper.UnmarshalKey("tokens_ttl", cfg); err != nil {
 		return err
 	}
 

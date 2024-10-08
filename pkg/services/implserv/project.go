@@ -1,4 +1,4 @@
-package services
+package implserv
 
 import (
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/dto"

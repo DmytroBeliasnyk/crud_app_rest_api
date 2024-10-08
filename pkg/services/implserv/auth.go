@@ -1,4 +1,4 @@
-package services
+package implserv
 
 import (
 	"crypto/sha256"
@@ -12,33 +12,41 @@ import (
 )
 
 type AuthService struct {
-	cfg AuthConfig
+	cfg authConfig
 }
 
-type AuthConfig struct {
-	Salt      string
-	Signature string
-	TokenTTL  time.Duration
+type authConfig struct {
+	salt      string
+	signature string
+	jwt       time.Duration
+	refresh   time.Duration
 }
 
-func NewAuthService(cfg *config.Config) *AuthService {
-	return &AuthService{}
+func NewAuthService(config *config.Config) *AuthService {
+	return &AuthService{
+		cfg: authConfig{
+			salt:      config.Auth.Salt,
+			signature: config.Auth.Signature,
+			jwt:       config.Auth.JWT,
+			refresh:   config.Auth.Refresh,
+		},
+	}
 }
 func (service *AuthService) hashPassword(password string) string {
 	h := sha256.New()
 	h.Write([]byte(password))
 
-	return fmt.Sprintf("%x", h.Sum([]byte(service.cfg.Salt)))
+	return fmt.Sprintf("%x", h.Sum([]byte(service.cfg.salt)))
 }
 
 func (service *AuthService) generateToken(id int64) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
 		Subject:   strconv.FormatInt(id, 10),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(service.cfg.TokenTTL)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(service.cfg.jwt)),
 	})
 
-	return token.SignedString([]byte(service.cfg.Signature))
+	return token.SignedString([]byte(service.cfg.signature))
 }
 
 func (service *AuthService) ParseToken(header []string) (int64, error) {
@@ -47,7 +55,7 @@ func (service *AuthService) ParseToken(header []string) (int64, error) {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
 
-		return []byte(service.cfg.Signature), nil
+		return []byte(service.cfg.signature), nil
 	})
 	if err != nil {
 		return 0, err
