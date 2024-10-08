@@ -16,7 +16,7 @@ type ProjectService interface {
 
 type UserService interface {
 	SignUp(su dto.SignUpDTO) (int64, error)
-	SignIn(si dto.SignInDTO) (string, error)
+	SignIn(si dto.SignInDTO) (string, string, error)
 }
 
 type AbstractService struct {

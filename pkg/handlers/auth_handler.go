@@ -38,14 +38,15 @@ func (h *Handler) signIn(ctx *gin.Context) {
 		return
 	}
 
-	token, err := h.service.UserService.SignIn(input)
+	jwtt, refresh, err := h.service.UserService.SignIn(input)
 	if err != nil {
 		newErrResponse(ctx, http.StatusUnauthorized, err.Error())
 		return
 	}
 
+	ctx.SetCookie("refresh-token", refresh, 864000, "/auth", "localhost", true, true)
 	ctx.JSON(http.StatusOK, map[string]interface{}{
-		"Bearer": token,
+		"Bearer": jwtt,
 	})
 }
 

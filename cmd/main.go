@@ -52,7 +52,8 @@ func main() {
 	}
 
 	repo := repositories.NewRepository(db)
-	auth := implserv.NewAuthService(cfg)
+	refresh := repositories.NewRefreshTokenRepository(db)
+	auth := implserv.NewAuthService(refresh, cfg)
 	service := services.NewService(repo, auth)
 	handlers := handlers.NewHandler(service, auth, memory.GetCache())
 
