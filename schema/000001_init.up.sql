@@ -16,7 +16,7 @@ CREATE TABLE projects(
 
 CREATE TABLE tokens(
     id SERIAL PRIMARY KEY,
-    token VARCHAR(255) NOT NULL,
-    expires_at TIMESTAMP NOT NULL,
-    user_id INT REFERENCES users (id) ON DELETE CASCADE NOT NULL
+    user_id INT REFERENCES users (id) ON DELETE CASCADE NOT NULL,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    expires_at TIMESTAMP NOT NULL
 );
