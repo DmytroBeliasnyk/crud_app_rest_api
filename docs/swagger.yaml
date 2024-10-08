@@ -13,6 +13,35 @@ definitions:
     required:
     - title
     type: object
+  dto.SignInDTO:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  dto.SignUpDTO:
+    properties:
+      email:
+        type: string
+      name:
+        minLength: 2
+        type: string
+      password:
+        minLength: 8
+        type: string
+      username:
+        minLength: 3
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - username
+    type: object
   handlers.errResponse:
     properties:
       message:
@@ -59,6 +88,8 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/handlers.errResponse'
+      security:
+      - ApiKeyAuth: []
       summary: GetById
       tags:
       - projects
@@ -84,6 +115,8 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/handlers.errResponse'
+      security:
+      - ApiKeyAuth: []
       summary: GetAll
       tags:
       - projects
@@ -116,7 +149,9 @@ paths:
         default:
           description: ""
           schema:
-            type: obkect
+            $ref: '#/definitions/handlers.errResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Create
       tags:
       - projects
@@ -150,6 +185,8 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/handlers.errResponse'
+      security:
+      - ApiKeyAuth: []
       summary: DeleteById
       tags:
       - projects
@@ -188,9 +225,111 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/handlers.errResponse'
+      security:
+      - ApiKeyAuth: []
       summary: UpdateById
       tags:
       - projects
+  /auth/refresh:
+    get:
+      consumes:
+      - application/json
+      description: refreshing jwt
+      parameters:
+      - description: refresh token from cookie
+        in: header
+        name: refresh-token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+      summary: refresh
+      tags:
+      - auth
+  /auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: user details
+        in: body
+        name: SignInDTO
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SignInDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+      summary: signIn
+      tags:
+      - auth
+  /auth/sign-up:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: user details
+        in: body
+        name: SignUpDTO
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SignUpDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+      summary: signUp
+      tags:
+      - auth
 produces:
 - application/json
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

@@ -15,13 +15,14 @@ import (
 //	@Summary		Create
 //	@Description	create new project
 //	@Tags			projects
+//	@Security		ApiKeyAuth
 //	@Accept			json
 //	@Produce		json
 //	@Param			input	body		dto.ProjectDTO	true	"project info"
 //	@Success		201		{integer}	integer			id
 //	@Failure		400		{object}	errResponse
 //	@Failure		500		{object}	errResponse
-//	@Failure		default	{obkect}	errResponse
+//	@Failure		default	{object}	errResponse
 //	@Router			/api/projects/ [post]
 func (h *Handler) create(c *gin.Context) {
 	var input dto.ProjectDTO
@@ -48,6 +49,7 @@ func (h *Handler) create(c *gin.Context) {
 //	@Summary		GetById
 //	@Description	get project by id
 //	@Tags			projects
+//	@Security		ApiKeyAuth
 //	@Accept			json
 //	@Produce		json
 //	@Param			id		query		integer	true	"project id"
@@ -86,6 +88,7 @@ func (h *Handler) getById(c *gin.Context) {
 //	@Summary		GetAll
 //	@Description	get all projects
 //	@Tags			projects
+//	@Security		ApiKeyAuth
 //	@Accept			json
 //	@Produce		json
 //	@Success		200		{array}		dto.ProjectDTO
@@ -115,6 +118,7 @@ func (h *Handler) getAll(c *gin.Context) {
 //	@Summary		UpdateById
 //	@Description	update project by id
 //	@Tags			projects
+//	@Security		ApiKeyAuth
 //	@Accept			json
 //	@Produce		json
 //	@Param			id		path		integer			true	"project id"
@@ -160,6 +164,7 @@ func (h *Handler) updateById(c *gin.Context) {
 //	@Summary		DeleteById
 //	@Description	delete project by id
 //	@Tags			projects
+//	@Security		ApiKeyAuth
 //	@Accept			json
 //	@Produce		json
 //	@Param			id		path		integer	true	"project id"

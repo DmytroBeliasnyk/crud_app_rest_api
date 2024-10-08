@@ -38,8 +38,12 @@ func init() {
 //	@host		localhost:8000
 //	@BasePath	/
 
-// @accept		json
-// @produce	json
+//	@accept		json
+//	@produce	json
+
+// @securityDefinitions.apikey	ApiKeyAuth
+// @in							header
+// @name						Authorization
 func main() {
 	cfg, err := initConfig()
 	if err != nil {

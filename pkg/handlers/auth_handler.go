@@ -8,6 +8,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// signUp godoc
+//
+//	@Summary	signUp
+//	@Tags		auth
+//	@Accept		json
+//	@Produce	json
+//	@Param		SignUpDTO	body		dto.SignUpDTO	true	"user details"
+//	@Success	201			{integer}	integer			user_id
+//	@Failure	400			{object}	errResponse
+//	@Failure	500			{object}	errResponse
+//	@Failure	default		{object}	errResponse
+//	@Router		/auth/sign-up [post]
 func (h *Handler) signUp(ctx *gin.Context) {
 	var input dto.SignUpDTO
 	if err := ctx.BindJSON(&input); err != nil {
@@ -31,6 +43,19 @@ func (h *Handler) signUp(ctx *gin.Context) {
 	})
 }
 
+// signIn godoc
+//
+//	@Summary	signIn
+//	@Tags		auth
+//	@Accept		json
+//	@Produce	json
+//	@Param		SignInDTO	body		dto.SignInDTO	true	"user details"
+//	@Header		200			{string}	Set-Cookie		"set new refresh token"
+//	@Success	200			{string}	string			jwt
+//	@Failure	400			{object}	errResponse
+//	@Failure	401			{object}	errResponse
+//	@Failure	default		{object}	errResponse
+//	@Router		/auth/sign-in [post]
 func (h *Handler) signIn(ctx *gin.Context) {
 	var input dto.SignInDTO
 	if err := ctx.BindJSON(&input); err != nil {
@@ -50,6 +75,19 @@ func (h *Handler) signIn(ctx *gin.Context) {
 	})
 }
 
+// refresh godoc
+//
+//	@Summary		refresh
+//	@Description	refreshing jwt
+//	@Tags			auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			refresh-token	header		string		true	"refresh token from cookie"
+//	@Header			200				{string}	Set-Cookie	"Set new refresh token"
+//	@Success		200				{string}	string		jwt
+//	@Failure		400				{object}	errResponse
+//	@Failure		default			{object}	errResponse
+//	@Router			/auth/refresh [get]
 func (h *Handler) refresh(ctx *gin.Context) {
 	rt, err := ctx.Cookie("refresh-token")
 	if err != nil {
