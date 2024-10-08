@@ -5,15 +5,15 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type AuthRepositoryImpl struct {
+type UserRepositoryImpl struct {
 	db *sqlx.DB
 }
 
-func NewAuthRepository(db *sqlx.DB) *AuthRepositoryImpl {
-	return &AuthRepositoryImpl{db}
+func NewUserRepository(db *sqlx.DB) *UserRepositoryImpl {
+	return &UserRepositoryImpl{db}
 }
 
-func (repo *AuthRepositoryImpl) SignUp(u *entity.User) (int64, error) {
+func (repo *UserRepositoryImpl) Create(u *entity.User) (int64, error) {
 	var id int64
 	if err := repo.db.QueryRow(`INSERT INTO users (name, email, username, password_hash)
 	 							VALUES ($1, $2, $3, $4) RETURNING id`,
@@ -24,7 +24,7 @@ func (repo *AuthRepositoryImpl) SignUp(u *entity.User) (int64, error) {
 	return id, nil
 }
 
-func (repo *AuthRepositoryImpl) SignIn(username, passwordHash string) (int64, error) {
+func (repo *UserRepositoryImpl) Find(username, passwordHash string) (int64, error) {
 	var id int64
 	if err := repo.db.QueryRow("SELECT id FROM users WHERE username=$1 AND password_hash=$2",
 		username, passwordHash).Scan(&id); err != nil {

@@ -14,19 +14,19 @@ type ProjectRepository interface {
 	DeleteById(id int64) error
 }
 
-type AuthRepository interface {
-	SignUp(u *entity.User) (int64, error)
-	SignIn(username, passwordHash string) (int64, error)
+type UserRepository interface {
+	Create(u *entity.User) (int64, error)
+	Find(username, passwordHash string) (int64, error)
 }
 
 type AbstractRepository struct {
 	ProjectRepository
-	AuthRepository
+	UserRepository
 }
 
 func NewRepository(db *sqlx.DB) *AbstractRepository {
 	return &AbstractRepository{
 		ProjectRepository: NewProjectRepository(db),
-		AuthRepository:    NewAuthRepository(db),
+		UserRepository:    NewUserRepository(db),
 	}
 }
