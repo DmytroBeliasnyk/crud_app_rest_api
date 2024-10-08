@@ -7,11 +7,11 @@ import (
 )
 
 type ProjectService interface {
-	Create(p dto.ProjectDTO) (int64, error)
-	GetById(id int64) (dto.ProjectDTO, error)
-	GetAll() ([]dto.ProjectDTO, error)
-	UpdateById(id int64, p dto.UpdateProjectDTO) error
-	DeleteById(id int64) error
+	Create(p dto.ProjectDTO, userId int64) (int64, error)
+	GetById(id int64, userId int64) (dto.ProjectDTO, error)
+	GetAll(userId int64) ([]dto.ProjectDTO, error)
+	UpdateById(id int64, p dto.UpdateProjectDTO, userId int64) error
+	DeleteById(id int64, userId int64) error
 }
 
 type UserService interface {

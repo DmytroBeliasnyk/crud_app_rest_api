@@ -7,6 +7,7 @@ type Project struct {
 	Title       string `db:"title"`
 	Description string `db:"description"`
 	Done        bool   `db:"done"`
+	UserId      int64  `db:"user_id"`
 }
 
 func FromDTO(dto dto.ProjectDTO) *Project {

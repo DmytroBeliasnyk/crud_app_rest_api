@@ -9,10 +9,10 @@ import (
 
 type ProjectRepository interface {
 	Create(p *entity.Project) (int64, error)
-	GetById(id int64) (entity.Project, error)
-	GetAll() ([]entity.Project, error)
-	UpdateById(id int64, input dto.UpdateProjectDTO) error
-	DeleteById(id int64) error
+	GetById(id int64, userId int64) (entity.Project, error)
+	GetAll(userId int64) ([]entity.Project, error)
+	UpdateById(id int64, input dto.UpdateProjectDTO, userId int64) error
+	DeleteById(id int64, userId int64) error
 }
 
 type UserRepository interface {

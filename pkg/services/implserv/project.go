@@ -14,18 +14,21 @@ func NewProjectService(repo repositories.ProjectRepository) *ProjectServiceImpl 
 	return &ProjectServiceImpl{repo}
 }
 
-func (service *ProjectServiceImpl) Create(p dto.ProjectDTO) (int64, error) {
-	return service.repo.Create(entity.FromDTO(p))
+func (service *ProjectServiceImpl) Create(p dto.ProjectDTO, userId int64) (int64, error) {
+	project := entity.FromDTO(p)
+	project.UserId = userId
+
+	return service.repo.Create(project)
 }
 
-func (service *ProjectServiceImpl) GetById(id int64) (dto.ProjectDTO, error) {
-	project, err := service.repo.GetById(id)
+func (service *ProjectServiceImpl) GetById(id int64, userId int64) (dto.ProjectDTO, error) {
+	project, err := service.repo.GetById(id, userId)
 
 	return *project.ToDTO(), err
 }
 
-func (service *ProjectServiceImpl) GetAll() ([]dto.ProjectDTO, error) {
-	projects, err := service.repo.GetAll()
+func (service *ProjectServiceImpl) GetAll(userId int64) ([]dto.ProjectDTO, error) {
+	projects, err := service.repo.GetAll(userId)
 
 	dtos := make([]dto.ProjectDTO, len(projects))
 	for i, p := range projects {
@@ -35,10 +38,10 @@ func (service *ProjectServiceImpl) GetAll() ([]dto.ProjectDTO, error) {
 	return dtos, err
 }
 
-func (service *ProjectServiceImpl) UpdateById(id int64, input dto.UpdateProjectDTO) error {
-	return service.repo.UpdateById(id, input)
+func (service *ProjectServiceImpl) UpdateById(id int64, input dto.UpdateProjectDTO, userId int64) error {
+	return service.repo.UpdateById(id, input, userId)
 }
 
-func (service *ProjectServiceImpl) DeleteById(id int64) error {
-	return service.repo.DeleteById(id)
+func (service *ProjectServiceImpl) DeleteById(id int64, userId int64) error {
+	return service.repo.DeleteById(id, userId)
 }
