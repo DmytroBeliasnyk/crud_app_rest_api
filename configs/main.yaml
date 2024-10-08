@@ -4,6 +4,14 @@ tokens_ttl:
   jwt: 15m
   refresh: 240h
 
+cookie:
+  name: "refresh-token"
+  age: 864000
+  path: "/auth"
+  domain: "localhost"
+  secure: false
+  http_only: true
+
 db:
   username: "postgres"
   host: "localhost"

@@ -55,7 +55,7 @@ func main() {
 	refresh := repositories.NewRefreshTokenRepository(db)
 	auth := implserv.NewAuthService(refresh, cfg)
 	service := services.NewService(repo, auth)
-	handlers := handlers.NewHandler(service, auth, memory.GetCache())
+	handlers := handlers.NewHandler(service, auth, cfg, memory.GetCache())
 
 	server := new(core.Server)
 	go func() {

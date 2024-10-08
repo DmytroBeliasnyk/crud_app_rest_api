@@ -38,15 +38,34 @@ func (h *Handler) signIn(ctx *gin.Context) {
 		return
 	}
 
-	jwtt, refresh, err := h.service.UserService.SignIn(input)
+	jt, rt, err := h.service.UserService.SignIn(input)
 	if err != nil {
 		newErrResponse(ctx, http.StatusUnauthorized, err.Error())
 		return
 	}
 
-	ctx.SetCookie("refresh-token", refresh, 864000, "/auth", "localhost", true, true)
+	ctx.SetCookie(h.cfg.name, rt, h.cfg.age, h.cfg.path, h.cfg.domain, h.cfg.secure, h.cfg.httpOnly)
 	ctx.JSON(http.StatusOK, map[string]interface{}{
-		"Bearer": jwtt,
+		"Bearer": jt,
+	})
+}
+
+func (h *Handler) refresh(ctx *gin.Context) {
+	rt, err := ctx.Cookie("refresh-token")
+	if err != nil {
+		newErrResponse(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	jt, rt, err := h.auth.UpdateTokens(rt)
+	if err != nil {
+		newErrResponse(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	ctx.SetCookie(h.cfg.name, rt, h.cfg.age, h.cfg.path, h.cfg.domain, h.cfg.secure, h.cfg.httpOnly)
+	ctx.JSON(http.StatusOK, map[string]interface{}{
+		"Bearer": jt,
 	})
 }
 
@@ -63,7 +82,7 @@ func (h *Handler) middlewareAuth(ctx *gin.Context) {
 		return
 	}
 
-	id, err := h.auth.ParseToken(auth)
+	id, err := h.auth.ParseToken(auth[1])
 	if err != nil {
 		newErrResponse(ctx, http.StatusUnauthorized, err.Error())
 		return

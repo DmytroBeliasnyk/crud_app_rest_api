@@ -2,6 +2,7 @@ package handlers
 
 import (
 	_ "github.com/DmytroBeliasnyk/crud_app_rest_api/docs"
+	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/config"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services/implserv"
 	"github.com/DmytroBeliasnyk/in_memory_cache/memory"
@@ -13,14 +14,34 @@ import (
 type Handler struct {
 	service *services.AbstractService
 	auth    *implserv.AuthService
+	cfg     cookieConfig
 	cache   *memory.Cache
 }
 
-func NewHandler(service *services.AbstractService, auth *implserv.AuthService, cache *memory.Cache) *Handler {
+type cookieConfig struct {
+	name     string
+	age      int
+	path     string
+	domain   string
+	secure   bool
+	httpOnly bool
+}
+
+func NewHandler(service *services.AbstractService, auth *implserv.AuthService,
+	config *config.Config, cache *memory.Cache) *Handler {
+	cooks := config.Cookie
 	return &Handler{
 		service: service,
 		auth:    auth,
 		cache:   cache,
+		cfg: cookieConfig{
+			name:     cooks.Name,
+			age:      cooks.Age,
+			path:     cooks.Path,
+			domain:   cooks.Domain,
+			secure:   cooks.Secure,
+			httpOnly: cooks.HttpOnly,
+		},
 	}
 }
 
@@ -33,6 +54,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		auth.POST("/sign-up", h.signUp)
 		auth.POST("/sign-in", h.signIn)
+		auth.GET("/refresh", h.refresh)
 	}
 
 	api := router.Group("/api")

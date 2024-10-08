@@ -26,6 +26,15 @@ type Config struct {
 		JWT       time.Duration `mapstructure:"jwt"`
 		Refresh   time.Duration `mapstructure:"refresh"`
 	} `mapstructure:"tokens_ttl"`
+
+	Cookie struct {
+		Name     string `mapstructure:"name"`
+		Age      int    `mapstructure:"age"`
+		Path     string `mapstructure:"path"`
+		Domain   string `mapstructure:"domain"`
+		Secure   bool   `mapstructure:"secure"`
+		HttpOnly bool   `mapstructure:"http_only"`
+	} `mapstructure:"cookie"`
 }
 
 type DBPassword struct {
@@ -65,6 +74,9 @@ func parseConfig(cfg *Config) error {
 		return err
 	}
 
+	if err := viper.UnmarshalKey("cookie", cfg); err != nil {
+		return err
+	}
 	return nil
 }
 

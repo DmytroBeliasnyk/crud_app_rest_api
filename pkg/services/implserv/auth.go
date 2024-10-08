@@ -1,7 +1,9 @@
 package implserv
 
 import (
+	"crypto/rand"
 	"crypto/sha256"
+	"database/sql"
 	"errors"
 	"fmt"
 	"strconv"
@@ -25,16 +27,18 @@ type authConfig struct {
 }
 
 func NewAuthService(repo *repositories.RefreshTokensRepository, config *config.Config) *AuthService {
+	auth := config.Auth
 	return &AuthService{
 		repo: repo,
 		cfg: authConfig{
-			salt:      config.Auth.Salt,
-			signature: config.Auth.Signature,
-			jwt:       config.Auth.JWT,
-			refresh:   config.Auth.Refresh,
+			salt:      auth.Salt,
+			signature: auth.Signature,
+			jwt:       auth.JWT,
+			refresh:   auth.JWT,
 		},
 	}
 }
+
 func (service *AuthService) HashPassword(password string) string {
 	h := sha256.New()
 	h.Write([]byte(password))
@@ -53,21 +57,44 @@ func (service *AuthService) GenerateTokens(id int64) (string, string, error) {
 		return "", "", err
 	}
 
-	rwtt := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
-		Subject:   strconv.FormatInt(id, 10),
-		IssuedAt:  jwt.NewNumericDate(time.Now()),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(service.cfg.refresh)),
-	})
-	rt, err := rwtt.SignedString([]byte(service.cfg.signature))
-	if err != nil {
+	token := make([]byte, 32)
+	if _, err = rand.Read(token); err != nil {
+		return "", "", err
+	}
+
+	rt := fmt.Sprintf("%x", token)
+	if err = service.repo.Create(id, rt, time.Now().Add(service.cfg.refresh)); err != nil {
 		return "", "", err
 	}
 
 	return jt, rt, nil
 }
 
-func (service *AuthService) ParseToken(header []string) (int64, error) {
-	token, err := jwt.Parse(header[1], func(t *jwt.Token) (interface{}, error) {
+func (service *AuthService) UpdateTokens(rt string) (string, string, error) {
+	id, expiresAt, err := service.repo.Find(rt)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", "", errors.New("invalid refresh token")
+		}
+		return "", "", err
+	}
+
+	if time.Now().After(expiresAt) {
+		if err := service.repo.Delete(rt); err != nil {
+			return "", "", err
+		}
+		return "", "", errors.New("token is expired")
+	}
+
+	if err := service.repo.Delete(rt); err != nil {
+		return "", "", err
+	}
+
+	return service.GenerateTokens(id)
+}
+
+func (service *AuthService) ParseToken(input string) (int64, error) {
+	token, err := jwt.Parse(input, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
