@@ -13,3 +13,10 @@ CREATE TABLE projects(
     done BOOLEAN NOT NULL DEFAULT false,
     user_id INT REFERENCES users (id) ON DELETE CASCADE NOT NULL
 );
+
+CREATE TABLE tokens(
+    id SERIAL PRIMARY KEY,
+    token VARCHAR(255) NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    user_id INT REFERENCES users (id) ON DELETE CASCADE NOT NULL
+);
