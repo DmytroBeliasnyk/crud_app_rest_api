@@ -51,8 +51,9 @@ func main() {
 	}
 
 	repo := repositories.NewRepository(db)
-	service := services.NewService(repo, cfg)
-	handlers := handlers.NewHandler(service, memory.GetCache(), cfg)
+	auth := services.NewAuthService(cfg)
+	service := services.NewService(repo, auth)
+	handlers := handlers.NewHandler(service, auth, memory.GetCache())
 
 	server := new(core.Server)
 	go func() {

@@ -1,15 +1,11 @@
 package handlers
 
 import (
-	"errors"
-	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/dto"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 func (h *Handler) signUp(ctx *gin.Context) {
@@ -24,7 +20,7 @@ func (h *Handler) signUp(ctx *gin.Context) {
 		return
 	}
 
-	id, err := h.service.AuthService.SignUp(input)
+	id, err := h.service.UserService.SignUp(input)
 	if err != nil {
 		newErrResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
@@ -42,7 +38,7 @@ func (h *Handler) signIn(ctx *gin.Context) {
 		return
 	}
 
-	token, err := h.service.AuthService.SignIn(input)
+	token, err := h.service.UserService.SignIn(input)
 	if err != nil {
 		newErrResponse(ctx, http.StatusUnauthorized, err.Error())
 		return
@@ -66,46 +62,11 @@ func (h *Handler) middlewareAuth(ctx *gin.Context) {
 		return
 	}
 
-	id, err := h.parseToken(auth)
+	id, err := h.auth.ParseToken(auth)
 	if err != nil {
 		newErrResponse(ctx, http.StatusUnauthorized, err.Error())
 		return
 	}
 
-	fmt.Printf("user %d authorized\n", id)
 	ctx.Set("user_id", id)
-}
-
-func (h *Handler) parseToken(header []string) (int64, error) {
-	token, err := jwt.Parse(header[1], func(t *jwt.Token) (interface{}, error) {
-		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
-		}
-
-		return []byte(h.cfg.Auth.Signature), nil
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	if !token.Valid {
-		return 0, errors.New("invalid token")
-	}
-
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return 0, errors.New("invalid token")
-	}
-
-	sub, err := claims.GetSubject()
-	if err != nil {
-		return 0, errors.New("invalid token")
-	}
-
-	id, err := strconv.Atoi(sub)
-	if err != nil {
-		return 0, errors.New("invalid token")
-	}
-
-	return int64(id), nil
 }
