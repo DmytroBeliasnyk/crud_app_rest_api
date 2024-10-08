@@ -1,7 +1,6 @@
 package implserv
 
 import (
-	"crypto/rand"
 	"crypto/sha256"
 	"errors"
 	"fmt"
@@ -43,34 +42,28 @@ func (service *AuthService) HashPassword(password string) string {
 	return fmt.Sprintf("%x", h.Sum([]byte(service.cfg.salt)))
 }
 
-func (service *AuthService) GenerateJWTToken(id int64) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
+func (service *AuthService) GenerateTokens(id int64) (string, string, error) {
+	jwtt := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
 		Subject:   strconv.FormatInt(id, 10),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(service.cfg.jwt)),
 	})
-
-	jwtt, err := token.SignedString([]byte(service.cfg.signature))
+	jt, err := jwtt.SignedString([]byte(service.cfg.signature))
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return jwtt, nil
-}
-
-func (service *AuthService) GenerateRefreshToken(id int64) (string, error) {
-	refresh := make([]byte, 32)
-	if _, err := rand.Read(refresh); err != nil {
-		return "", err
+	rwtt := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
+		Subject:   strconv.FormatInt(id, 10),
+		IssuedAt:  jwt.NewNumericDate(time.Now()),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(service.cfg.refresh)),
+	})
+	rt, err := rwtt.SignedString([]byte(service.cfg.signature))
+	if err != nil {
+		return "", "", err
 	}
 
-	token := fmt.Sprintf("%x", refresh)
-
-	if err := service.repo.Create(id, token, time.Now().Add(service.cfg.refresh)); err != nil {
-		return "", err
-	}
-
-	return token, nil
+	return jt, rt, nil
 }
 
 func (service *AuthService) ParseToken(header []string) (int64, error) {
