@@ -69,7 +69,7 @@ func (repo *ProjectRepositoryImpl) UpdateById(id int64, input dto.UpdateProjectD
 	}
 
 	values := strings.Join(setValues, ", ")
-	args = append(args, id)
+	args = append(args, id, userId)
 
 	query := fmt.Sprintf("UPDATE projects SET %s WHERE id=$%d AND user_id=$%d", values, argId, argId+1)
 	if _, err := repo.db.Exec(query, args...); err != nil {
