@@ -11,9 +11,8 @@ import (
 
 func TestCreate(t *testing.T) {
 	db, mock, err := sqlxmock.Newx()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
+
+	assert.NoError(t, err, "an error '%s' was not expected when opening a stub database connection", err)
 	defer db.Close()
 
 	repo := NewProjectRepository(db)
@@ -70,9 +69,8 @@ func TestCreate(t *testing.T) {
 
 func TestGetById(t *testing.T) {
 	db, mock, err := sqlxmock.Newx()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
+
+	assert.NoError(t, err, "an error '%s' was not expected when opening a stub database connection", err)
 	defer db.Close()
 
 	repo := NewProjectRepository(db)
@@ -139,9 +137,8 @@ func TestGetById(t *testing.T) {
 
 func TestGetAll(t *testing.T) {
 	db, mock, err := sqlxmock.Newx()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
+
+	assert.NoError(t, err, "an error '%s' was not expected when opening a stub database connection", err)
 	defer db.Close()
 
 	repo := NewProjectRepository(db)
@@ -171,9 +168,8 @@ func TestGetAll(t *testing.T) {
 
 func TestUpdateById(t *testing.T) {
 	db, mock, err := sqlxmock.Newx()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
+
+	assert.NoError(t, err, "an error '%s' was not expected when opening a stub database connection", err)
 	defer db.Close()
 
 	repo := NewProjectRepository(db)
@@ -194,9 +190,8 @@ func TestUpdateById(t *testing.T) {
 
 func TestDeleteById(t *testing.T) {
 	db, mock, err := sqlxmock.Newx()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
+
+	assert.NoError(t, err, "an error '%s' was not expected when opening a stub database connection", err)
 	defer db.Close()
 
 	repo := NewProjectRepository(db)
