@@ -1,11 +1,11 @@
 package implrepo
 
 import (
-	"slices"
 	"testing"
 
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/dto"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/entity"
+	"github.com/stretchr/testify/assert"
 	sqlxmock "github.com/zhashkevych/go-sqlxmock"
 )
 
@@ -54,17 +54,16 @@ func TestCreate(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			c.mock()
+
 			got, err := repo.Create(&c.project)
-			if (err != nil) != c.expectedErr {
-				t.Errorf("got error = %s, expected error %t", err, c.expectedErr)
-				return
+			if c.expectedErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, got, c.expected)
 			}
-			if err == nil && got != c.expected {
-				t.Errorf("got = %d, expected %d", got, c.expected)
-			}
-			if err = mock.ExpectationsWereMet(); err != nil {
-				t.Errorf("there were unfulfilled expectations: %s", err)
-			}
+
+			assert.NoError(t, mock.ExpectationsWereMet())
 		})
 	}
 }
@@ -126,16 +125,14 @@ func TestGetById(t *testing.T) {
 			c.mock()
 
 			got, err := repo.GetById(c.args.id, c.args.userId)
-			if (err != nil) != c.expectedErr {
-				t.Fatalf("got err = %s, expected error = %t", err, c.expectedErr)
-				return
+			if c.expectedErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, got, c.expected)
 			}
-			if err == nil && got != c.expected {
-				t.Fatalf("got err = %v, expected error = %v", got, c.expected)
-			}
-			if err = mock.ExpectationsWereMet(); err != nil {
-				t.Fatalf("there were unfulfilled expectations: %s", err)
-			}
+
+			assert.NoError(t, mock.ExpectationsWereMet())
 		})
 	}
 }
@@ -166,15 +163,10 @@ func TestGetAll(t *testing.T) {
 		WillReturnRows(rows)
 
 	got, err := repo.GetAll(arg)
-	if err != nil {
-		t.Fatalf("got err = %s", err)
-	}
-	if !slices.Equal(got, expected) {
-		t.Fatalf("got err = %s", err)
-	}
-	if err = mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
-	}
+
+	assert.Equal(t, got, expected)
+	assert.NoError(t, err)
+	assert.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestUpdateById(t *testing.T) {
@@ -194,12 +186,10 @@ func TestUpdateById(t *testing.T) {
 		WithArgs(updateDone, 1, 2).
 		WillReturnResult(sqlxmock.NewResult(0, 1))
 
-	if got := repo.UpdateById(1, input, 2); got != nil {
-		t.Errorf("got error: %s", got)
-	}
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
-	}
+	err = repo.UpdateById(1, input, 2)
+
+	assert.NoError(t, err)
+	assert.NoError(t, mock.ExpectationsWereMet())
 }
 
 func TestDeleteById(t *testing.T) {
@@ -215,10 +205,9 @@ func TestDeleteById(t *testing.T) {
 		WithArgs(1, 2).
 		WillReturnResult(sqlxmock.NewResult(0, 1))
 
-	if got := repo.DeleteById(1, 2); got != nil {
-		t.Errorf("got error: %s", got)
-	}
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
-	}
+	err = repo.DeleteById(1, 2)
+
+	assert.NoError(t, err)
+	assert.NoError(t, mock.ExpectationsWereMet())
+
 }
