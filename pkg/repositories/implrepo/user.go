@@ -33,11 +33,3 @@ func (repo *UserRepositoryImpl) Find(username, passwordHash string) (int64, erro
 
 	return id, nil
 }
-
-func (repo *UserRepositoryImpl) GetAllProjects(userId int64) (projects []entity.Project, err error) {
-	if err = repo.db.Select(&projects, "SELECT * FROM projects WHERE user_id=$1", userId); err != nil {
-		return
-	}
-
-	return
-}
