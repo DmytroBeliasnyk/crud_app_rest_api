@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"time"
+
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/dto"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/entity"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/repositories/implrepo"
@@ -17,19 +19,22 @@ type ProjectRepository interface {
 	DeleteById(id int64, userId int64) error
 }
 
-type UserRepository interface {
-	Create(u *entity.User) (int64, error)
-	Find(username, passwordHash string) (int64, error)
+type AuthRepository interface {
+	SignUp(u *entity.User) (int64, error)
+	SignIn(username, passwordHash string) (int64, error)
+	CreateRefreshToken(userId int64, token string, expiresAt time.Time) error
+	FindRefreshToken(token string) (int64, time.Time, error)
+	DeleteRefreshToken(token string) error
 }
 
 type AbstractRepository struct {
 	ProjectRepository
-	UserRepository
+	AuthRepository
 }
 
 func NewRepository(db *sqlx.DB) *AbstractRepository {
 	return &AbstractRepository{
 		ProjectRepository: implrepo.NewProjectRepository(db),
-		UserRepository:    implrepo.NewUserRepository(db),
+		AuthRepository:    implrepo.NewUserRepository(db),
 	}
 }
