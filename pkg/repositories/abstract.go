@@ -7,6 +7,8 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+//go:generate mockgen -source=abstract.go -destination=mocks/mock.go
+
 type ProjectRepository interface {
 	Create(p *entity.Project) (int64, error)
 	GetById(id int64, userId int64) (entity.Project, error)
