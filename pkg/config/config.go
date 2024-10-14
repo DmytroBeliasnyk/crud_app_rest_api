@@ -10,35 +10,38 @@ import (
 
 type Config struct {
 	ServerPort string `mapstructure:"server_port"`
+	DB         DB     `mapstructure:"db"`
+	Auth       Auth   `mapstructure:"tokens_ttl"`
+	Cookie     Cookie `mapstructure:"cookie"`
+}
 
-	DB struct {
-		Host     string `mapstructure:"host"`
-		Port     string `mapstructure:"port"`
-		Username string `mapstructure:"username"`
-		DBName   string `mapstructure:"dbname"`
-		SSLMode  string `mapstructure:"sslmode"`
-		Password DBPassword
-	} `mapstructure:"db"`
-
-	Auth struct {
-		Salt      string
-		Signature string
-		JWT       time.Duration `mapstructure:"jwt"`
-		Refresh   time.Duration `mapstructure:"refresh"`
-	} `mapstructure:"tokens_ttl"`
-
-	Cookie struct {
-		Name     string `mapstructure:"name"`
-		Age      int    `mapstructure:"age"`
-		Path     string `mapstructure:"path"`
-		Domain   string `mapstructure:"domain"`
-		Secure   bool   `mapstructure:"secure"`
-		HttpOnly bool   `mapstructure:"http_only"`
-	} `mapstructure:"cookie"`
+type DB struct {
+	Host     string `mapstructure:"host"`
+	Port     string `mapstructure:"port"`
+	Username string `mapstructure:"username"`
+	DBName   string `mapstructure:"dbname"`
+	SSLMode  string `mapstructure:"sslmode"`
+	Password DBPassword
 }
 
 type DBPassword struct {
 	Password string
+}
+
+type Auth struct {
+	Salt      string
+	Signature string
+	JWT       time.Duration `mapstructure:"jwt"`
+	Refresh   time.Duration `mapstructure:"refresh"`
+}
+
+type Cookie struct {
+	Name     string `mapstructure:"name"`
+	Age      int    `mapstructure:"age"`
+	Path     string `mapstructure:"path"`
+	Domain   string `mapstructure:"domain"`
+	Secure   bool   `mapstructure:"secure"`
+	HttpOnly bool   `mapstructure:"http_only"`
 }
 
 func InitConfig(folder, file string) (*Config, error) {
