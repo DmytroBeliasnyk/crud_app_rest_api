@@ -8,7 +8,7 @@ import (
 	sqlmock "github.com/zhashkevych/go-sqlxmock"
 )
 
-func TestCreaete(t *testing.T) {
+func TestUserRepository_Create(t *testing.T) {
 	db, mock, err := sqlmock.Newx()
 
 	assert.NoError(t, err, "an error '%s' was not expected when opening a stub database connection", err)
@@ -69,7 +69,7 @@ func TestCreaete(t *testing.T) {
 	}
 }
 
-func TestFind(t *testing.T) {
+func TestUserRepository_Find(t *testing.T) {
 	db, mock, err := sqlmock.Newx()
 
 	assert.NoError(t, err, "an error '%s' was not expected when opening a stub database connection", err)

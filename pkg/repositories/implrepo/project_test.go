@@ -9,7 +9,7 @@ import (
 	sqlxmock "github.com/zhashkevych/go-sqlxmock"
 )
 
-func TestCreate(t *testing.T) {
+func TestProjectRepository_Create(t *testing.T) {
 	db, mock, err := sqlxmock.Newx()
 
 	assert.NoError(t, err, "an error '%s' was not expected when opening a stub database connection", err)
@@ -67,7 +67,7 @@ func TestCreate(t *testing.T) {
 	}
 }
 
-func TestGetById(t *testing.T) {
+func TestProjectRepository_GetById(t *testing.T) {
 	db, mock, err := sqlxmock.Newx()
 
 	assert.NoError(t, err, "an error '%s' was not expected when opening a stub database connection", err)
@@ -135,7 +135,7 @@ func TestGetById(t *testing.T) {
 	}
 }
 
-func TestGetAll(t *testing.T) {
+func TestProjectRepository_GetAll(t *testing.T) {
 	db, mock, err := sqlxmock.Newx()
 
 	assert.NoError(t, err, "an error '%s' was not expected when opening a stub database connection", err)
@@ -166,7 +166,7 @@ func TestGetAll(t *testing.T) {
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
 
-func TestUpdateById(t *testing.T) {
+func TestProjectRepository_UpdateById(t *testing.T) {
 	db, mock, err := sqlxmock.Newx()
 
 	assert.NoError(t, err, "an error '%s' was not expected when opening a stub database connection", err)
@@ -188,7 +188,7 @@ func TestUpdateById(t *testing.T) {
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
 
-func TestDeleteById(t *testing.T) {
+func TestProjectRepository_DeleteById(t *testing.T) {
 	db, mock, err := sqlxmock.Newx()
 
 	assert.NoError(t, err, "an error '%s' was not expected when opening a stub database connection", err)
