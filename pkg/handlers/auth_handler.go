@@ -32,7 +32,7 @@ func (h *Handler) signUp(ctx *gin.Context) {
 		return
 	}
 
-	id, err := h.service.UserService.SignUp(input)
+	id, err := h.service.AuthService.SignUp(input)
 	if err != nil {
 		newErrResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
@@ -63,7 +63,7 @@ func (h *Handler) signIn(ctx *gin.Context) {
 		return
 	}
 
-	jt, rt, err := h.service.UserService.SignIn(input)
+	jt, rt, err := h.service.AuthService.SignIn(input)
 	if err != nil {
 		newErrResponse(ctx, http.StatusUnauthorized, err.Error())
 		return
@@ -95,7 +95,7 @@ func (h *Handler) refresh(ctx *gin.Context) {
 		return
 	}
 
-	jt, rt, err := h.auth.UpdateTokens(rt)
+	jt, rt, err := h.service.AuthService.UpdateTokens(rt)
 	if err != nil {
 		newErrResponse(ctx, http.StatusBadRequest, err.Error())
 		return
@@ -120,7 +120,7 @@ func (h *Handler) middlewareAuth(ctx *gin.Context) {
 		return
 	}
 
-	id, err := h.auth.ParseToken(auth[1])
+	id, err := h.service.AuthService.ParseToken(auth[1])
 	if err != nil {
 		newErrResponse(ctx, http.StatusUnauthorized, err.Error())
 		return

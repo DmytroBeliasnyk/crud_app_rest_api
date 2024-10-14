@@ -9,13 +9,15 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/dto"
+	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/entity"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/config"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/repositories"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type AuthService struct {
-	repo *repositories.RefreshTokensRepository
+type AuthServiceImpl struct {
+	repo repositories.AuthRepository
 	cfg  authConfig
 }
 
@@ -26,9 +28,9 @@ type authConfig struct {
 	refresh   time.Duration
 }
 
-func NewAuthService(repo *repositories.RefreshTokensRepository, config *config.Config) *AuthService {
+func NewAuthService(repo repositories.AuthRepository, config *config.Config) *AuthServiceImpl {
 	auth := config.Auth
-	return &AuthService{
+	return &AuthServiceImpl{
 		repo: repo,
 		cfg: authConfig{
 			salt:      auth.Salt,
@@ -39,14 +41,32 @@ func NewAuthService(repo *repositories.RefreshTokensRepository, config *config.C
 	}
 }
 
-func (service *AuthService) HashPassword(password string) string {
+func (service *AuthServiceImpl) SignUp(su dto.SignUpDTO) (int64, error) {
+	return service.repo.SignUp(entity.FromSignUpDTO(su, service.HashPassword(su.Password)))
+}
+
+func (service *AuthServiceImpl) SignIn(si dto.SignInDTO) (string, string, error) {
+	id, err := service.repo.SignIn(si.Username, service.HashPassword(si.Password))
+	if err != nil {
+		return "", "", err
+	}
+
+	jt, rt, err := service.GenerateTokens(id)
+	if err != nil {
+		return "", "", err
+	}
+
+	return jt, rt, nil
+}
+
+func (service *AuthServiceImpl) HashPassword(password string) string {
 	h := sha256.New()
 	h.Write([]byte(password))
 
 	return fmt.Sprintf("%x", h.Sum([]byte(service.cfg.salt)))
 }
 
-func (service *AuthService) GenerateTokens(id int64) (string, string, error) {
+func (service *AuthServiceImpl) GenerateTokens(id int64) (string, string, error) {
 	jwtt := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.RegisteredClaims{
 		Subject:   strconv.FormatInt(id, 10),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -63,15 +83,15 @@ func (service *AuthService) GenerateTokens(id int64) (string, string, error) {
 	}
 
 	rt := fmt.Sprintf("%x", token)
-	if err = service.repo.Create(id, rt, time.Now().Add(service.cfg.refresh)); err != nil {
+	if err = service.repo.CreateRefreshToken(id, rt, time.Now().Add(service.cfg.refresh)); err != nil {
 		return "", "", err
 	}
 
 	return jt, rt, nil
 }
 
-func (service *AuthService) UpdateTokens(rt string) (string, string, error) {
-	id, expiresAt, err := service.repo.Find(rt)
+func (service *AuthServiceImpl) UpdateTokens(rt string) (string, string, error) {
+	id, expiresAt, err := service.repo.FindRefreshToken(rt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return "", "", errors.New("invalid refresh token")
@@ -80,20 +100,20 @@ func (service *AuthService) UpdateTokens(rt string) (string, string, error) {
 	}
 
 	if time.Now().After(expiresAt) {
-		if err := service.repo.Delete(rt); err != nil {
+		if err := service.repo.DeleteRefreshToken(rt); err != nil {
 			return "", "", err
 		}
 		return "", "", errors.New("token is expired")
 	}
 
-	if err := service.repo.Delete(rt); err != nil {
+	if err := service.repo.DeleteRefreshToken(rt); err != nil {
 		return "", "", err
 	}
 
 	return service.GenerateTokens(id)
 }
 
-func (service *AuthService) ParseToken(input string) (int64, error) {
+func (service *AuthServiceImpl) ParseToken(input string) (int64, error) {
 	token, err := jwt.Parse(input, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])

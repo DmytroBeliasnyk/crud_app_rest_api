@@ -12,7 +12,6 @@ import (
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/handlers"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/repositories"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services"
-	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services/implserv"
 	"github.com/DmytroBeliasnyk/in_memory_cache/memory"
 	"github.com/sirupsen/logrus"
 )
@@ -56,10 +55,8 @@ func main() {
 	}
 
 	repo := repositories.NewRepository(db)
-	refresh := repositories.NewRefreshTokenRepository(db)
-	auth := implserv.NewAuthService(refresh, cfg)
-	service := services.NewService(repo, auth)
-	handlers := handlers.NewHandler(service, auth, cfg, memory.GetCache())
+	service := services.NewService(repo, cfg)
+	handlers := handlers.NewHandler(service, cfg, memory.GetCache())
 
 	server := new(core.Server)
 	go func() {

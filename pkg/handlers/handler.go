@@ -4,7 +4,6 @@ import (
 	_ "github.com/DmytroBeliasnyk/crud_app_rest_api/docs"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/config"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services"
-	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services/implserv"
 	"github.com/DmytroBeliasnyk/in_memory_cache/memory"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -13,7 +12,6 @@ import (
 
 type Handler struct {
 	service *services.AbstractService
-	auth    *implserv.AuthService
 	cfg     cookieConfig
 	cache   *memory.Cache
 }
@@ -27,12 +25,10 @@ type cookieConfig struct {
 	httpOnly bool
 }
 
-func NewHandler(service *services.AbstractService, auth *implserv.AuthService,
-	config *config.Config, cache *memory.Cache) *Handler {
+func NewHandler(service *services.AbstractService, config *config.Config, cache *memory.Cache) *Handler {
 	cooks := config.Cookie
 	return &Handler{
 		service: service,
-		auth:    auth,
 		cache:   cache,
 		cfg: cookieConfig{
 			name:     cooks.Name,

@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/core/dto"
+	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/config"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/repositories"
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services/implserv"
 )
@@ -14,19 +15,23 @@ type ProjectService interface {
 	DeleteById(id int64, userId int64) error
 }
 
-type UserService interface {
+type AuthService interface {
 	SignUp(su dto.SignUpDTO) (int64, error)
 	SignIn(si dto.SignInDTO) (string, string, error)
+	HashPassword(password string) string
+	GenerateTokens(id int64) (string, string, error)
+	UpdateTokens(rt string) (string, string, error)
+	ParseToken(input string) (int64, error)
 }
 
 type AbstractService struct {
 	ProjectService
-	UserService
+	AuthService
 }
 
-func NewService(repo *repositories.AbstractRepository, serv *implserv.AuthService) *AbstractService {
+func NewService(repo *repositories.AbstractRepository, cfg *config.Config) *AbstractService {
 	return &AbstractService{
 		ProjectService: implserv.NewProjectService(repo.ProjectRepository),
-		UserService:    implserv.NewUserService(repo.UserRepository, serv),
+		AuthService:    implserv.NewAuthService(repo.AuthRepository, cfg),
 	}
 }
