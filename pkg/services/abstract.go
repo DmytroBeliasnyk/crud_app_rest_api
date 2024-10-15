@@ -7,6 +7,8 @@ import (
 	"github.com/DmytroBeliasnyk/crud_app_rest_api/pkg/services/implserv"
 )
 
+//go:generate mockgen -source=abstract.go -destination=mocks/mock.go
+
 type ProjectService interface {
 	Create(p dto.ProjectDTO, userId int64) (int64, error)
 	GetById(id int64, userId int64) (dto.ProjectDTO, error)
@@ -17,7 +19,7 @@ type ProjectService interface {
 
 type AuthService interface {
 	SignUp(su dto.SignUpDTO) (int64, error)
-	SignIn(si dto.SignInDTO) (string, string, error)
+	SignIn(si dto.SignInDTO) (int64, error)
 	HashPassword(password string) string
 	GenerateTokens(id int64) (string, string, error)
 	UpdateTokens(rt string) (string, string, error)

@@ -63,9 +63,15 @@ func (h *Handler) signIn(ctx *gin.Context) {
 		return
 	}
 
-	jt, rt, err := h.service.AuthService.SignIn(input)
+	userId, err := h.service.AuthService.SignIn(input)
 	if err != nil {
 		newErrResponse(ctx, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	jt, rt, err := h.service.AuthService.GenerateTokens(userId)
+	if err != nil {
+		newErrResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
 

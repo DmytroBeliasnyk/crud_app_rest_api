@@ -45,18 +45,8 @@ func (service *AuthServiceImpl) SignUp(su dto.SignUpDTO) (int64, error) {
 	return service.repo.SignUp(entity.FromSignUpDTO(su, service.HashPassword(su.Password)))
 }
 
-func (service *AuthServiceImpl) SignIn(si dto.SignInDTO) (string, string, error) {
-	id, err := service.repo.SignIn(si.Username, service.HashPassword(si.Password))
-	if err != nil {
-		return "", "", err
-	}
-
-	jt, rt, err := service.GenerateTokens(id)
-	if err != nil {
-		return "", "", err
-	}
-
-	return jt, rt, nil
+func (service *AuthServiceImpl) SignIn(si dto.SignInDTO) (int64, error) {
+	return service.repo.SignIn(si.Username, service.HashPassword(si.Password))
 }
 
 func (service *AuthServiceImpl) HashPassword(password string) string {
