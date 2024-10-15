@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"net/http"
 	"strings"
 
@@ -65,7 +66,12 @@ func (h *Handler) signIn(ctx *gin.Context) {
 
 	userId, err := h.service.AuthService.SignIn(input)
 	if err != nil {
-		newErrResponse(ctx, http.StatusUnauthorized, err.Error())
+		if err == sql.ErrNoRows {
+			newErrResponse(ctx, http.StatusUnauthorized, "invalid username or password")
+			return
+		}
+
+		newErrResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
 

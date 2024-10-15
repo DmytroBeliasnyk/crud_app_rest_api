@@ -176,13 +176,12 @@ func (mr *MockAuthServiceMockRecorder) ParseToken(input interface{}) *gomock.Cal
 }
 
 // SignIn mocks base method.
-func (m *MockAuthService) SignIn(si dto.SignInDTO) (string, string, error) {
+func (m *MockAuthService) SignIn(si dto.SignInDTO) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignIn", si)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(string)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // SignIn indicates an expected call of SignIn.

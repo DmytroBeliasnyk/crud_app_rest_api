@@ -36,7 +36,7 @@ func NewAuthService(repo repositories.AuthRepository, config *config.Config) *Au
 			salt:      auth.Salt,
 			signature: auth.Signature,
 			jwt:       auth.JWT,
-			refresh:   auth.JWT,
+			refresh:   auth.Refresh,
 		},
 	}
 }
