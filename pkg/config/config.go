@@ -80,6 +80,7 @@ func parseConfig(cfg *Config) error {
 	if err := viper.UnmarshalKey("cookie", cfg); err != nil {
 		return err
 	}
+
 	return nil
 }
 
