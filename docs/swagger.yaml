@@ -59,6 +59,40 @@ info:
   version: "1.0"
 paths:
   /api/projects:
+    delete:
+      consumes:
+      - application/json
+      description: delete project by id
+      parameters:
+      - description: project id
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteById
+      tags:
+      - projects
     get:
       consumes:
       - application/json
@@ -91,6 +125,46 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: GetById
+      tags:
+      - projects
+    post:
+      consumes:
+      - application/json
+      description: update project by id
+      parameters:
+      - description: project id
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: project info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ProjectDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handlers.errResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: UpdateById
       tags:
       - projects
   /api/projects/:
@@ -153,81 +227,6 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Create
-      tags:
-      - projects
-  /api/projects/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: delete project by id
-      parameters:
-      - description: project id
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.statusResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.errResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.errResponse'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/handlers.errResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: DeleteById
-      tags:
-      - projects
-    post:
-      consumes:
-      - application/json
-      description: update project by id
-      parameters:
-      - description: project id
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: project info
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/dto.ProjectDTO'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handlers.statusResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handlers.errResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handlers.errResponse'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/handlers.errResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: UpdateById
       tags:
       - projects
   /auth/refresh:
